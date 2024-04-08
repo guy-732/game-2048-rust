@@ -1,0 +1,41 @@
+name: Rust lint check
+
+on:
+  push:
+    branches: [ "master", "dev" ]
+  pull_request:
+    branches: [ "master", "dev" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    name: Rust fmt check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup rust toolchain with rustfmt
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt
+      - name: Run fmt check
+        uses: actions-rust-lang/rustfmt@v1
+
+  clippy:
+    runs-on: ubuntu-latest
+    name: Rust clippy check
+    steps:
+      
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup rust toolchain with clippy
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy
+      - name: run clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --workspace --no-deps -- -D warnings
